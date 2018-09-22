@@ -1,0 +1,55 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="diagnose">
+            <h2><span>Diagnose</span> {{diagnose.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>Diagnose Date</span></dt>
+                <dd>
+                    <span>{{diagnose.diagnoseDate}}</span>
+                </dd>
+                <dt><span>Disease</span></dt>
+                <dd>
+                    <div *ngIf="diagnose.diseaseId">
+                        <a [routerLink]="['/disease', diagnose.diseaseId, 'view']">{{diagnose.diseaseId}}</a>
+                    </div>
+                </dd>
+                <dt><span>Doctor</span></dt>
+                <dd>
+                    {{diagnose.doctorId}}
+                </dd>
+                <dt><span>Symptoms</span></dt>
+                <dd>
+                    <span *ngFor="let symptoms of diagnose.symptoms; let last = last">
+                        <a [routerLink]="['/symptom', symptoms?.id, 'view' ]">{{symptoms.id}}</a>{{last ? '' : ', '}}
+                    </span>
+                </dd>
+                <dt><span>Medicines</span></dt>
+                <dd>
+                    <span *ngFor="let medicines of diagnose.medicines; let last = last">
+                        <a [routerLink]="['/medicine', medicines?.id, 'view' ]">{{medicines.id}}</a>{{last ? '' : ', '}}
+                    </span>
+                </dd>
+                <dt><span>Patient</span></dt>
+                <dd>
+                    <div *ngIf="diagnose.patientId">
+                        <a [routerLink]="['/patient', diagnose.patientId, 'view']">{{diagnose.patientId}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/diagnose', diagnose.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
