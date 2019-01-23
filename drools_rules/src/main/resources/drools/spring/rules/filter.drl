@@ -1,0 +1,48 @@
+package drools.spring.rules;
+
+import sbnz.soft.nikola.domain.Symptom;
+import sbnz.soft.nikola.domain.Disease;
+import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
+
+query "filter diseases" (List symptomsEntered)
+		disease : Disease( $generalSyms: generalSymptoms, $specificSyms: specificSymptoms )
+		
+		accumulate (
+			Symptom( $symptomName: name) from $generalSyms,
+			$listOfNamesOfGeneralSymptoms: collectList( $symptomName )
+		)
+		
+		accumulate (
+			Symptom( $symptomName: name) from $specificSyms,
+			$listOfNamesOfSpecificSymptoms: collectList( $symptomName )
+		)
+		
+		numOfGeneralSymps: Integer(intValue >= 0) from accumulate (
+			$s : Symptom( name memberOf $listOfNamesOfGeneralSymptoms ) from symptomsEntered,
+			init(int matched=0;)
+			action(matched+=1;)
+			result(matched)
+		)
+		
+		numOfSpecificSymps: Number((intValue + numOfGeneralSymps) >= 1) from accumulate (
+			$s : Symptom( name memberOf $listOfNamesOfSpecificSymptoms ) from symptomsEntered,
+			init(int matched=0;)
+			action(matched+=1;)
+			result(matched)
+		)
+end
+
+query "get Symptoms" (Disease disease)
+		
+		accumulate (
+			$s: Symptom() from disease.getGeneralSymptoms(),
+			listOfGeneralSymptoms: collectList( $s )
+		)
+		
+		accumulate (
+			$s: Symptom() from disease.getSpecificSymptoms(),
+			listOfSpecificSymptoms: collectList( $s )
+		)
+end

@@ -1,0 +1,44 @@
+package drools.spring.rules;
+
+import sbnz.soft.nikola.domain.Medicine;
+import sbnz.soft.nikola.domain.Diagnose;
+import java.util.List;
+import java.util.Collections;
+
+
+global java.util.List allergicOn;
+global java.util.List allergicOnIngredients;
+
+rule "Checking if patient is alergic to medicine"
+	agenda-group "allergies"
+    when
+		$diagnose: Diagnose( $medicines : medicines, $patient: patient)
+		
+		Number(intValue >= 1) from accumulate( 
+          $m1: Medicine( $m1 memberOf $patient.getAllergicMedicines()
+          ) from $medicines,
+          init( int matched = 0; ),
+          action( matched += 1; System.out.println(allergicOn); allergicOn.add($m1); ),
+          result(matched)
+        )
+    then
+		System.out.println("Patient is allergic to one or more drugs.");
+end
+
+rule "Checking if patient is alergic to ingredients"
+	agenda-group "allergies"
+    when
+		$diagnose: Diagnose( $medicines : medicines, $patient: patient )
+		
+		Number(intValue >= 1) from accumulate ( 
+          $m1: Medicine( Collections.disjoint($m1.ingredients, $patient.getAllergicIngredients()) == false
+          ) from $medicines,
+          init( int matched = 0; ),
+          action( matched += 1; allergicOnIngredients.add($m1); ),
+          result(matched)
+        )
+    then
+		System.out.println("Patient is allergic to one ore more ingredients for given medicine");
+end
+
+

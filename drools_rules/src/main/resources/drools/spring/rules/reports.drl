@@ -1,0 +1,109 @@
+package drools.spring.rules;
+
+import sbnz.soft.nikola.domain.Diagnose;
+import sbnz.soft.nikola.domain.Medicine;
+import sbnz.soft.nikola.domain.Patient;
+import sbnz.soft.nikola.domain.enumeration.MedicineType;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+import sbnz.soft.nikola.service.util.DateUtil;
+
+query "report chronics"
+		patient : Patient($medicalRecord : diagnoses, $years2Before: DateUtil.dateSomeYearsAgo(2))
+		disease : Disease( name != "Groznica", name != "Prehlada", $name: name)
+		
+		moreThan5Times : List(size > 5) from accumulate (
+			$d: Diagnose( diagnoseDate.compareTo($years2Before) <= 0 && disease.getName() == $name ) from $medicalRecord,
+			collectList($d)
+		)
+end
+
+query "report addicts"
+		patient : Patient($medicalRecord : diagnoses, $montsBefore: DateUtil.dateSomeMonthsAgo(6))
+		
+		//sve dijagnoze poslednjih 6 meseci
+		allDiagnosesLast6Months : List() from accumulate (
+			$d: Diagnose( diagnoseDate.compareTo($montsBefore) >= 1) from $medicalRecord,
+			collectList($d)
+		)
+		
+		//svi lekovi iz dijagnoza poslednjih 6 meseci
+		allMedicinesFromDiagnoses : List() from accumulate (
+			$d: Diagnose () from allDiagnosesLast6Months,
+			init(List medicines = new ArrayList(); ),
+			action( medicines.addAll($d.getMedicines()); )
+			result(medicines)
+		)
+ 		
+ 		//prebroji koliko puta su pripisani anelgetici
+		Number(intValue >=6) from accumulate (
+			$m: Medicine( type == MedicineType.ANELGETIC ) from allMedicinesFromDiagnoses,
+			init(int matched=0;)
+			action(matched+=1; )
+			result(matched)
+		)
+		
+		//prebroji doktore
+		doctors : Set(size >= 3) from accumulate (
+			$d: Diagnose() from allDiagnosesLast6Months,
+			init( Set docs = new HashSet<>(); )
+			action(
+				for(Medicine m: $d.getMedicines()) {
+					if (m.getType() == MedicineType.ANELGETIC) {
+						docs.add($d.getDoctor());
+					}
+				}
+			)
+			result(docs)
+		)
+		
+end
+
+query "report immunity"
+		patient : Patient($medicalRecord : diagnoses, $montsBefore: DateUtil.dateSomeMonthsAgo(12))
+		
+		//sve dijagnoze poslednjih 12 meseci i mora ih imati barem 10
+		allDiagnosesLast12Months: List(size > 10)  from accumulate (
+			$d: Diagnose( diagnoseDate.compareTo($montsBefore) >= 1) from $medicalRecord,
+			init(List diagnoses = new ArrayList();)
+			action(diagnoses.add($d);)
+			result(diagnoses)
+		)
+		
+		// barem 2 razlicite bolesti za koje su pripisani antibiotici iz dijagnoza poslednjih 12 meseci
+		diseases : Set(size >= 2) from accumulate (
+			$d: Diagnose () from allDiagnosesLast12Months,
+			init(Set dis = new HashSet<>(); ),
+			action( 
+				for(Medicine m: $d.getMedicines()) {
+					if (m.getType() == MedicineType.ANTIBIOTIC) {
+						dis.add($d.getDisease());
+						break;
+					}
+				}
+			)
+			result(dis)
+		)
+		
+		// Pacijent u poslednjih 12 meseci nije bolovao od bolesti za koju mu nisu bili prepisani antibiotici
+		diseases2 : Set(size == 0) from accumulate (
+			$d: Diagnose () from allDiagnosesLast12Months,
+			init(Set dis1 = new HashSet<>(); ),
+			action( 
+				boolean found = false;
+				for(Medicine m: $d.getMedicines()) {
+					if (m.getType() == MedicineType.ANTIBIOTIC) {
+						found = true;
+						break;
+					}
+				}
+				if (found == false) {
+					dis1.add($d);
+				}		
+			)
+			result(dis1)
+		)
+		
+end

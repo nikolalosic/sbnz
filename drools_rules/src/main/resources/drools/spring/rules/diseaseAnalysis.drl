@@ -1,0 +1,342 @@
+package drools.spring.rules;
+
+import sbnz.soft.nikola.domain.Symptom;
+import sbnz.soft.nikola.domain.Medicine;
+import sbnz.soft.nikola.domain.enumeration.MedicineType;
+import sbnz.soft.nikola.domain.Disease;
+import sbnz.soft.nikola.domain.Diagnose;
+import sbnz.soft.nikola.service.util.DateUtil;
+import java.util.List;
+import java.util.ArrayList;
+
+rule "Prehlada (grupa 1)"
+	agenda-group "diseaseAnalysis"
+	lock-on-active true // avoid the re-activation of a rule
+	salience($priority) // sets priority if more than one rule is matched
+    when
+    	$cold: Disease( name == "Prehlada", $totalSymptoms: generalSymptoms.size(), $symptomsFromDisease: generalSymptoms)
+		$matchedDisease: Disease( name == null)
+		$enteredSymptoms: List() from collect (Symptom())
+		
+		accumulate (
+			Symptom( $symptomName: name) from $symptomsFromDisease,
+			$listOfNamesOfSymptoms: collectList( $symptomName )
+		)
+
+		// more than 80 percent, cold has five symptoms, we need 4
+		$priority : Number(doubleValue >= 80) from accumulate( 
+          $s: Symptom(name memberOf $listOfNamesOfSymptoms
+          ) from $enteredSymptoms,
+          init( int matched = 0; ),
+          action( matched += 1; ),
+          result(((double)matched/(double)$totalSymptoms)*100)
+        )
+    then
+        System.out.println($priority);
+        modify ($matchedDisease) {
+        	setName($cold.getName());
+        }
+end
+
+
+rule "Groznica (grupa 1)"
+	agenda-group "diseaseAnalysis"
+	lock-on-active true // avoid the re-activation of a rule
+	salience($priority) // sets priority if more than one rule is matched
+    when
+    	$cold: Disease( name == "Groznica", $totalSymptoms: generalSymptoms.size(), $symptomsFromDisease: generalSymptoms)
+		$matchedDisease: Disease( name == null)
+		$enteredSymptoms: List() from collect (Symptom())
+		
+		accumulate (
+			Symptom( $symptomName: name) from $symptomsFromDisease,
+			$listOfNamesOfSymptoms: collectList( $symptomName )
+		)
+
+		// has 7 symptoms, we need at least 4, percentage is 57
+		$priority : Number(doubleValue >= 57) from accumulate( 
+          $s: Symptom(name memberOf $listOfNamesOfSymptoms
+          ) from $enteredSymptoms,
+          init( int matched = 0; ),
+          action( matched += 1; ),
+          result(((double)matched/(double)$totalSymptoms)*100)
+        )
+    then
+        System.out.println($priority);
+        modify ($matchedDisease) {
+        	setName($cold.getName());
+        }
+end
+
+rule "Upala krajnika (grupa 1)"
+	agenda-group "diseaseAnalysis"
+	lock-on-active true // avoid the re-activation of a rule
+	salience($priority) // sets priority if more than one rule is matched
+    when
+    	$cold: Disease( name == "Upala krajnika", $totalSymptoms: generalSymptoms.size(), $symptomsFromDisease: generalSymptoms)
+		$matchedDisease: Disease( name == null)
+		$enteredSymptoms: List() from collect (Symptom())
+		
+		accumulate (
+			Symptom( $symptomName: name) from $symptomsFromDisease,
+			$listOfNamesOfSymptoms: collectList( $symptomName )
+		)
+
+		// has 8 symptoms, we need at least 4, percentage is 49
+		$priority : Number(doubleValue >= 49) from accumulate( 
+          $s: Symptom(name memberOf $listOfNamesOfSymptoms
+          ) from $enteredSymptoms,
+          init( int matched = 0; ),
+          action( matched += 1; ),
+          result(((double)matched/(double)$totalSymptoms)*100)
+        )
+    then
+        System.out.println($priority);
+        modify ($matchedDisease) {
+        	setName($cold.getName());
+        }
+end
+
+rule "Sinusna infekcija (grupa 1)"
+	agenda-group "diseaseAnalysis"
+	lock-on-active true // avoid the re-activation of a rule
+	salience($priority)	 // sets priority if more than one rule is matched
+	when
+		$cold: Disease( name == "Sinusna infekcija", $totalSymptoms: (generalSymptoms.size()+specificSymptoms.size()), $symptomsFromDisease: generalSymptoms)
+		$matchedDisease: Disease( name == null, $today: DateUtil.today(), $daysBefore: DateUtil.dateSomeDaysAgo(60))
+		$enteredSymptoms: List() from collect (Symptom())
+		$diagnoses: List() from collect (Diagnose())
+		
+		accumulate (
+			Symptom( $symptomName: name) from $symptomsFromDisease,
+			$listOfNamesOfSymptoms: collectList( $symptomName )
+		)
+		
+		// get names of diseases from the diagnoses in the last 60 days
+		accumulate (
+		    // from x days to today
+			Diagnose( diagnoseDate.compareTo($today) <= 0 && diagnoseDate.compareTo($daysBefore) >= 0, $diseaseName: disease.getName() ) from $diagnoses,
+			$listOfDiagnosesLast60Days: collectSet( $diseaseName )
+		)
+		
+		// result is 1 if matches one of specific symptomsa
+		$specificSymptoms : Double(doubleValue >= 0) from accumulate (
+			$s: String( this == "Prehlada" || this == "Groznica" ) from $listOfDiagnosesLast60Days,
+			init( int matched = 0; ),
+	        action( if (matched == 0) { matched += 1; } ), // dont increase if already is satisfied
+	        result((double)matched)
+		)
+
+		// has 7 symptoms, we need at least 4, percentage is 57
+		$priority : Number(doubleValue >= 57) from accumulate( 
+          $s: Symptom(name memberOf $listOfNamesOfSymptoms
+          ) from $enteredSymptoms,
+          init( int matched = 0; ),
+          action( matched += 1; ),
+          result((((double)matched + $specificSymptoms)/(double)$totalSymptoms)*100)
+        )
+		
+	then
+		System.out.println($priority);
+        modify ($matchedDisease) {
+        	setName($cold.getName());
+        }
+end
+
+rule "Hipertenizja (grupa 2)"
+	agenda-group "diseaseAnalysis"
+	lock-on-active true // avoid the re-activation of a rule
+	salience($priority) // sets priority if more than one rule is matched
+    when
+    	$cold: Disease( name == "Hipertenzija", $totalSymptoms: specificSymptoms.size() )
+		$matchedDisease: Disease( name == null, $today: DateUtil.today(), $daysBefore: DateUtil.dateSomeMonthsAgo(6))
+		$visokPritisak: Symptom( name == "Visok pritisak")
+		$diagnoses: List() from collect (Diagnose())
+		
+		// list of all diagnoses in th elast 6 months
+		accumulate (
+		    // from x days to today
+			$d: Diagnose( diagnoseDate.compareTo($today) <= 0 && diagnoseDate.compareTo($daysBefore) >= 0 ) from $diagnoses,
+			$listOfDiagnosessLast6Months: collectList( $d )
+		)
+		// priority is higher than first group
+		$priority : Double(doubleValue == 400.0) from accumulate (
+			$diag: Diagnose( $diag.symptoms contains $visokPritisak) from $listOfDiagnosessLast6Months,
+			init( int matched = 0; ),
+	        action( if(matched < 10) { matched += 1; } ), // ten times * pritisak
+	        result((double)matched * 40.0)
+		)
+		
+    then
+    	System.out.println($priority);
+    	modify ($matchedDisease) {
+        	setName($cold.getName());
+        }
+end
+
+rule "Dijabetes (grupa 2)"
+	agenda-group "diseaseAnalysis"
+	lock-on-active true  // avoid the re-activation of a rule
+	salience($priority) // sets priority if more than one rule is matched
+    when
+    	$cold: Disease( name == "Dijabetes", $totalSymptoms: generalSymptoms.size(), $symptomsFromDisease: generalSymptoms)
+		$matchedDisease: Disease( name == null)
+		$enteredSymptoms: List() from collect (Symptom())
+		
+		accumulate (
+			Symptom( $symptomName: name) from $symptomsFromDisease,
+			$listOfNamesOfSymptoms: collectList( $symptomName )
+		)
+		
+		//dodatno uvecan prioritet zbog grupe 2
+		$priority : Number(doubleValue == 420.0) from accumulate(
+          $s: Symptom(name memberOf $listOfNamesOfSymptoms
+          ) from $enteredSymptoms,
+          init( int matched = 0; ),
+          action( matched += 1; ),
+          result(((double)matched/(double)$totalSymptoms)*100*4.2)
+        )
+    then
+        System.out.println($priority);
+        modify ($matchedDisease) {
+        	setName($cold.getName());
+        }
+end
+
+rule "Hronicna bubrezna bolest (grupa 3)"
+	agenda-group "diseaseAnalysis"
+	lock-on-active true  // avoid the re-activation of a rule
+	salience($priority) // sets priority if more than one rule is matched
+	when
+		$cold: Disease( name == "Hronicna bubrezna bolest", $totalSymptoms: (generalSymptoms.size()+specificSymptoms.size()), $symptomsFromDisease: generalSymptoms)
+		$matchedDisease: Disease( name == null, $today: DateUtil.today(), $daysBefore: DateUtil.dateSomeMonthsAgo(6))
+		$enteredSymptoms: List() from collect (Symptom())
+		$listOfDiagnoses: List() from collect (Diagnose())
+		
+		// list of symptom names
+		accumulate (
+			Symptom( $symptomName: name) from $symptomsFromDisease,
+			$listOfNamesOfSymptoms: collectList( $symptomName )
+		)
+		
+		// 1 if hipertenzija
+		$specificKidney : Integer(intValue >= 0) from accumulate (
+		    // in the last 6 months
+			$diag: Diagnose( this.disease.getName() == "Hipertenzija" && this.getDiagnoseDate().compareTo($daysBefore) <= 0) from $listOfDiagnoses,
+			init( int matched = 0; ),
+	        action( if (matched != 1) { matched += 1; } ),
+	        result(matched)
+		)
+		
+		//  1 if diabetes
+		$specificDiabetes : Integer((intValue + $specificKidney) >= 1) from accumulate (
+			$diag: Diagnose( this.disease.getName() == "Dijabetes" ) from $listOfDiagnoses,
+			init( int matched = 0; ),
+	        action( if (matched != 1) { matched += 1; } ),
+	        result(matched)
+		)
+
+		// basic symptoms, more than 2 needed
+		$basic : Integer(intValue >= 2) from accumulate (
+			$s: Symptom(name memberOf $listOfNamesOfSymptoms
+          	) from $enteredSymptoms,
+			init( int matched = 0; ),
+          	action( matched += 1; ),
+          	result(matched)
+		)
+
+		// 3 from 7, 0.428
+		$priority : Number(doubleValue >= 4280.0) from accumulate(
+          $s: Symptom(name memberOf $listOfNamesOfSymptoms
+          ) from $enteredSymptoms,
+          init( int matched = 0; ),
+          action( matched += 1; ),
+          result(((double)(matched + $specificKidney + $specificDiabetes)/$totalSymptoms)*1000) // more priority, 3rd group
+        )
+	then
+		System.out.println($priority);
+        modify ($matchedDisease) {
+        	setName($cold.getName());
+        }
+end
+
+rule "Akutna bubrezna povreda (grupa 3)"
+	agenda-group "diseaseAnalysis"
+	lock-on-active true  // avoid the re-activation of a rule
+	salience($priority) // sets priority if more than one rule is matched
+	when
+		$cold: Disease( name == "Akutna bubrezna povreda", $totalSymptoms: (generalSymptoms.size()+specificSymptoms.size()), $symptomsFromDisease: generalSymptoms, $spe: specificSymptoms)
+		$matchedDisease: Disease( name == null, $today: DateUtil.today(), $days14Before: DateUtil.dateSomeDaysAgo(14), $days21Before: DateUtil.dateSomeDaysAgo(21))
+		$enteredSymptoms: List() from collect (Symptom())
+		$diagnoses: List() from collect (Diagnose())
+		
+		//lista naziva simptoma bolesti
+		accumulate (
+			Symptom( $symptomName: name) from $symptomsFromDisease,
+			$listOfNamesOfSymptoms: collectList( $symptomName )
+		)
+		
+		//lista of all basic symptoms in the last 14 days, high temperature is in the basic symptoms
+		$listOfSymtpomsLast14Days : List() from accumulate (
+			$d: Diagnose( this.getDiagnoseDate().compareTo($today) <= 0 && this.getDiagnoseDate().compareTo($days14Before) >= 0 ) from $diagnoses,
+			init( List list = new ArrayList(); )
+            action(list.addAll($d.getDisease().getGeneralSymptoms());  )
+            result( list )
+		)
+		
+		// list of all medicines in the last 21 days
+		$listOfMedicinesLast21Days : List() from accumulate (
+			$d: Diagnose( this.getDiagnoseDate().compareTo($today) <= 0 && this.getDiagnoseDate().compareTo($days21Before) >= 0 ) from $diagnoses,
+			init( List list = new ArrayList(); )
+            action(list.addAll($d.getMedicines()); )
+            result( list )
+		)
+		
+		//bice 1 ako je specificna za operaciju
+		$specificOperation : Integer(intValue >= 0) from accumulate (
+			$s: Symptom( $enteredSymptoms contains new Symptom(27L)) from $cold.getSpecificSymptoms(),
+			init( int matched = 0; ),
+	        action( if (matched != 1) { matched += 1; }   ),
+	        result(matched)
+		)
+		
+		// 1 if high temperature in the last 14 days
+		$specificTemperature : Integer(intValue >= 0) from accumulate (
+			$s: Symptom( (name == "Temperatura od 40 do 41 stepen" || name == "Temperatura veca od 38 stepeni") ) from $listOfSymtpomsLast14Days,
+			init( int matched = 0; ),
+	        action( if (matched != 1) { matched += 1; } ),
+	        result(matched)
+		)
+
+		// passes if contains antibtiotic, had high temperature or had operation
+		$specificMedicine : Integer((intValue + $specificTemperature + $specificOperation) >= 1) from accumulate (
+			$m: Medicine( type == MedicineType.ANTIBIOTIC ) from $listOfMedicinesLast21Days,
+			init( int matched = 0; ),
+	        action( if (matched != 1) { matched += 1; } ),
+	        result(matched)
+		)
+
+		// number of matched basic symptoms 2 or more
+		$basic : Integer(intValue >= 2) from accumulate (
+			$s: Symptom(name memberOf $listOfNamesOfSymptoms
+          	) from $enteredSymptoms,
+			init( int matched = 0; ),
+          	action( matched += 1; ),
+          	result(matched)
+		)
+
+		// 3 from 7, 0.428
+		$priority : Number(doubleValue >= 4280.0) from accumulate(
+          $s: Symptom(name memberOf $listOfNamesOfSymptoms
+          ) from $enteredSymptoms,
+          init( int matched = 0; ),
+          action( matched += 1; ),
+          result(((double)(matched + $specificOperation + $specificTemperature +  $specificMedicine)/$totalSymptoms)*1000)
+        )
+		
+	then
+		System.out.println($priority);
+        modify ($matchedDisease) {
+        	setName($cold.getName());
+        }
+end

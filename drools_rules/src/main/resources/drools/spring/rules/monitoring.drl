@@ -1,0 +1,84 @@
+package drools.spring.rules;
+
+import sbnz.soft.nikola.domain.events.HeartBeatEvent;
+import sbnz.soft.nikola.domain.events.OxygenEvent;
+import sbnz.soft.nikola.domain.events.DialysisEvent;
+import sbnz.soft.nikola.domain.events.UrgentDialysisEvent;
+import sbnz.soft.nikola.domain.events.OxygenProblemEvent;
+import sbnz.soft.nikola.domain.events.AcceleratedHeartBeatEvent;
+import sbnz.soft.nikola.domain.Patient;
+import sbnz.soft.nikola.domain.Disease;
+
+rule "More than 25 hearthbeats last 10 seconds!"
+	agenda-group "fast-heartbeat"
+    when
+        Number (intValue > 25) from accumulate (
+        	$h: HeartBeatEvent(
+		) over window:time(10s),
+        	init(int matched = 0;)
+        	action(matched+=1;)
+        	result(matched)
+        )
+    then
+        System.out.println("AcceleratedHeartBeatEvent triggered");
+		insert(new AcceleratedHeartBeatEvent());
+        drools.halt();
+end
+
+rule "Oxygen level in blood less than 70mmHg!"
+	agenda-group "oxygen-problems"
+    when
+        // get oxygen levels less than 70mmhg in blood
+    	$oxygen: OxygenEvent( $amount: amount, $time: executionTime, $amount < 70 )
+
+        // nije zabelezen rast nivoa kiseonika u poslednjih 15 min
+        not (
+        	OxygenEvent(
+        		(this != $oxygen && amount > $amount && executionTime > $time)
+        	) over window:time(15m)
+        )
+    then
+        System.out.println("Problem with oxygen triggered");
+		insert(new OxygenProblemEvent());
+        drools.halt();
+end
+
+rule "Dialysis immediately!"
+	agenda-group "emergency-dialysis"
+    when
+    	$patient: Patient( )
+    	$hb: HeartBeatEvent( $time: executionTime )
+    	
+    	//pacijent boluje od hronicne bubrezne bolesti
+    	Number (intValue >= 0) from accumulate (
+			$d: Diagnose( disease.name == "Hronicna bubrezna bolest" ) from $patient.getDiagnoses(),
+			init(int matched = 0; )
+			action(matched += 1; System.out.println("Found disease");)
+			result(matched)
+		)
+    
+    	//u poslednjih 10 sekundi zabelezeno je vise od 10 otkucaja srca
+    	Number (intValue > 10) from accumulate (
+        	$h: HeartBeatEvent(
+        		(this != $hb && executionTime > $time)
+        	) over window:time(10s),
+        	init(int matched = 0; System.out.println("Heart beat");)
+        	action(matched+=1;)
+        	result(matched)
+        )
+    
+    	//suma kolicne mokrenja u poslednjih 12 sati je manja od 100ml
+        Number (intValue < 100) from accumulate (
+        	$dialysis: DialysisEvent() over window:time(12h),
+        	init(int sum = 0;)
+        	action(sum += $dialysis.getAmount(); System.out.println("Suma mokrenja!");)
+        	result(sum)
+        )
+    then
+    	System.out.println("Urgent Dialysis triggered!");
+		insert(new UrgentDialysisEvent());
+        drools.halt();
+end
+
+
+
