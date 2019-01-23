@@ -91,6 +91,7 @@
         <sonar.sources>${project.basedir}/src/main/</sonar.sources>
         <sonar.surefire.reportsPath>${project.testresult.directory}/surefire-reports</sonar.surefire.reportsPath>
         <sonar.tests>${project.basedir}/src/test/</sonar.tests>
+        <kie.version>6.5.0.Final</kie.version>
 
         <!-- jhipster-needle-maven-property -->
     </properties>
@@ -109,6 +110,39 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- D R O O L S -->
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-core</artifactId>
+            <version>${kie.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-ci</artifactId>
+            <version>${kie.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-spring</artifactId>
+            <version>${kie.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>sbnz.soft.nikola</groupId>
+            <artifactId>drools_rules</artifactId>
+            <type>jar</type>
+            <version>1.0.0-SNAPSHOT</version>
+            <!--<scope>system</scope>
+            <systemPath>${project.basedir}/../drools_rules/target/drools_rules-1.0.0-SNAPSHOT.jar</systemPath>
+        --></dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-aether-provider</artifactId>
+            <version>3.3.9</version>
+        </dependency>
+        <!-- D R O O L S -->
+
+
         <dependency>
             <groupId>io.github.jhipster</groupId>
             <artifactId>jhipster-framework</artifactId>
@@ -744,12 +778,12 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-undertow</artifactId>
                 </dependency>
-                <dependency>
+            <!--    <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-devtools</artifactId>
                     <optional>true</optional>
                 </dependency>
-            </dependencies>
+            --></dependencies>
             <build>
                 <plugins>
                     <plugin>

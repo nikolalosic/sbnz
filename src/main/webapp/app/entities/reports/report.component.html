@@ -1,0 +1,38 @@
+<div>
+    <h2 id="page-heading">
+        <span>Reports</span>
+
+        <button class="btn btn-primary" (click)="reportAddicts()"> Report Addicts
+        </button>
+
+        <button class="btn btn-primary" (click)="reportChronics()"> Report Chronics
+        </button>
+
+        <button class="btn btn-primary" (click)="reportImmunity()"> Report Immunity
+        </button>
+
+    </h2>
+    <jhi-alert></jhi-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="patients">
+        <table class="table table-striped">
+            <tbody>
+            <tr *ngFor="let patient of patients ;trackBy: trackId">
+                <td><a [routerLink]="['/patient', patient.id, 'view' ]">{{patient.id}}</a></td>
+                <td>{{patient.firstName}}</td>
+                <td>{{patient.lastName}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/patient', patient.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline">View</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

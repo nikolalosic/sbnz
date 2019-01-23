@@ -1,7 +1,7 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="disease">
-            <h2><span>Disease</span> {{disease.id}}</h2>
+            <h2>{{disease.id}} - {{disease.name}}</h2>
             <hr>
             <jhi-alert-error></jhi-alert-error>
             <dl class="row-md jh-entity-details">
@@ -12,13 +12,19 @@
                 <dt><span>General Symptoms</span></dt>
                 <dd>
                     <span *ngFor="let generalSymptoms of disease.generalSymptoms; let last = last">
-                        <a [routerLink]="['/symptom', generalSymptoms?.id, 'view' ]">{{generalSymptoms.id}}</a>{{last ? '' : ', '}}
+                        <a [routerLink]="['/symptom', generalSymptoms?.id, 'view' ]">{{generalSymptoms.id}}-{{generalSymptoms.name}}</a>{{last ? '' : ', '}}
                     </span>
                 </dd>
                 <dt><span>Specific Symptoms</span></dt>
                 <dd>
                     <span *ngFor="let specificSymptoms of disease.specificSymptoms; let last = last">
-                        <a [routerLink]="['/symptom', specificSymptoms?.id, 'view' ]">{{specificSymptoms.id}}</a>{{last ? '' : ', '}}
+                        <a [routerLink]="['/symptom', specificSymptoms?.id, 'view' ]">{{specificSymptoms.id}}-{{specificSymptoms.name}}</a>{{last ? '' : ', '}}
+                    </span>
+                </dd>
+                <dt><span>Sorted Symptoms</span></dt>
+                <dd>
+                    <span *ngFor="let sortedSymptoms of disease.sortedSymptoms; let last = last">
+                        <a [routerLink]="['/symptom', sortedSymptoms?.id, 'view' ]">{{sortedSymptoms.id}}-{{sortedSymptoms.name}}</a>{{last ? '' : ', '}}
                     </span>
                 </dd>
             </dl>
@@ -29,7 +35,7 @@
                 <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
             </button>
 
-            <button type="button"
+            <button type="button" *jhiHasAnyAuthority="'ROLE_ADMIN'"
                     [routerLink]="['/disease', disease.id, 'edit']"
                     class="btn btn-primary">
                 <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>

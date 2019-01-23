@@ -34,7 +34,7 @@ export const diagnoseRoute: Routes = [
             pagingParams: JhiResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_DOCTOR'],
             defaultSort: 'id,asc',
             pageTitle: 'Diagnoses'
         },
@@ -47,7 +47,7 @@ export const diagnoseRoute: Routes = [
             diagnose: DiagnoseResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_DOCTOR'],
             pageTitle: 'Diagnoses'
         },
         canActivate: [UserRouteAccessService]
@@ -59,7 +59,7 @@ export const diagnoseRoute: Routes = [
             diagnose: DiagnoseResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_DOCTOR'],
             pageTitle: 'Diagnoses'
         },
         canActivate: [UserRouteAccessService]
@@ -71,7 +71,7 @@ export const diagnoseRoute: Routes = [
             diagnose: DiagnoseResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_DOCTOR'],
             pageTitle: 'Diagnoses'
         },
         canActivate: [UserRouteAccessService]
@@ -86,7 +86,7 @@ export const diagnosePopupRoute: Routes = [
             diagnose: DiagnoseResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_DOCTOR'],
             pageTitle: 'Diagnoses'
         },
         canActivate: [UserRouteAccessService],

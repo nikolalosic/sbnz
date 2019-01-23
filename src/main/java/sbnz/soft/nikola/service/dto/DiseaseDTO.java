@@ -1,10 +1,10 @@
 package sbnz.soft.nikola.service.dto;
 
+import org.mvel2.util.Make;
+
 import javax.validation.constraints.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * A DTO for the Disease entity.
@@ -19,6 +19,16 @@ public class DiseaseDTO implements Serializable {
     private Set<SymptomDTO> generalSymptoms = new HashSet<>();
 
     private Set<SymptomDTO> specificSymptoms = new HashSet<>();
+
+    public List<SymptomDTO> getSortedSymptoms() {
+        return sortedSymptoms;
+    }
+
+    public void setSortedSymptoms(List<SymptomDTO> sortedSymptoms) {
+        this.sortedSymptoms = sortedSymptoms;
+    }
+
+    private List<SymptomDTO> sortedSymptoms = new ArrayList<>();
 
     public Long getId() {
         return id;

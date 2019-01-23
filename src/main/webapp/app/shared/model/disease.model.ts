@@ -5,8 +5,10 @@ export interface IDisease {
     name?: string;
     generalSymptoms?: ISymptom[];
     specificSymptoms?: ISymptom[];
+    sortedSymptoms?: ISymptom[];
+
 }
 
 export class Disease implements IDisease {
-    constructor(public id?: number, public name?: string, public generalSymptoms?: ISymptom[], public specificSymptoms?: ISymptom[]) {}
+    constructor(public id?: number, public name?: string, public generalSymptoms?: ISymptom[], public specificSymptoms?: ISymptom[],  sortedSymptoms?: ISymptom[]) {}
 }

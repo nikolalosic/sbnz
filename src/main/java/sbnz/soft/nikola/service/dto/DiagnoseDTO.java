@@ -3,6 +3,7 @@ package sbnz.soft.nikola.service.dto;
 import java.time.Instant;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -14,18 +15,67 @@ public class DiagnoseDTO implements Serializable {
 
     private Long id;
 
-    @NotNull
-    private Instant diagnoseDate;
+    private Date diagnoseDate;
 
     private Long diseaseId;
 
+    private String diseaseName;
+
     private Long doctorId;
+
+    private String doctorFirstName;
+
+    private String doctorLastName;
 
     private Set<SymptomDTO> symptoms = new HashSet<>();
 
     private Set<MedicineDTO> medicines = new HashSet<>();
 
     private Long patientId;
+
+    public String getDiseaseName() {
+        return diseaseName;
+    }
+
+    public void setDiseaseName(String diseaseName) {
+        this.diseaseName = diseaseName;
+    }
+
+    public String getDoctorFirstName() {
+        return doctorFirstName;
+    }
+
+    public void setDoctorFirstName(String doctorFirstName) {
+        this.doctorFirstName = doctorFirstName;
+    }
+
+    public String getDoctorLastName() {
+        return doctorLastName;
+    }
+
+    public void setDoctorLastName(String doctorLastName) {
+        this.doctorLastName = doctorLastName;
+    }
+
+    public String getPatientFirstName() {
+        return patientFirstName;
+    }
+
+    public void setPatientFirstName(String patientFirstName) {
+        this.patientFirstName = patientFirstName;
+    }
+
+    public String getPatientLastName() {
+        return patientLastName;
+    }
+
+    public void setPatientLastName(String patientLastName) {
+        this.patientLastName = patientLastName;
+    }
+
+    private String patientFirstName;
+
+    private String patientLastName;
 
     public Long getId() {
         return id;
@@ -35,11 +85,11 @@ public class DiagnoseDTO implements Serializable {
         this.id = id;
     }
 
-    public Instant getDiagnoseDate() {
+    public Date getDiagnoseDate() {
         return diagnoseDate;
     }
 
-    public void setDiagnoseDate(Instant diagnoseDate) {
+    public void setDiagnoseDate(Date diagnoseDate) {
         this.diagnoseDate = diagnoseDate;
     }
 

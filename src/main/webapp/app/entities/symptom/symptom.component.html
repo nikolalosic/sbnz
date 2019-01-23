@@ -1,7 +1,7 @@
 <div>
     <h2 id="page-heading">
         <span>Symptoms</span>
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-symptom" [routerLink]="['/symptom/new']">
+        <button id="jh-create-entity" *jhiHasAnyAuthority="'ROLE_ADMIN'" class="btn btn-primary float-right jh-create-entity create-symptom" [routerLink]="['/symptom/new']">
             <fa-icon [icon]="'plus'"></fa-icon>
             <span >
             Create new Symptom
@@ -31,13 +31,13 @@
                             <fa-icon [icon]="'eye'"></fa-icon>
                             <span class="d-none d-md-inline">View</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="'ROLE_ADMIN'"
                                 [routerLink]="['/symptom', symptom.id, 'edit']"
                                 class="btn btn-primary btn-sm">
                             <fa-icon [icon]="'pencil-alt'"></fa-icon>
                             <span class="d-none d-md-inline">Edit</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" *jhiHasAnyAuthority="'ROLE_ADMIN'"
                                 [routerLink]="['/', { outlets: { popup: 'symptom/'+ symptom.id + '/delete'} }]"
                                 replaceUrl="true"
                                 queryParamsHandling="merge"

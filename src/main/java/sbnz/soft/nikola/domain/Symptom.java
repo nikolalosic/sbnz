@@ -25,6 +25,14 @@ public class Symptom implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
+    public Symptom() {
+
+    }
+
+    public Symptom(Long id) {
+        this.id = id;
+    }
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;

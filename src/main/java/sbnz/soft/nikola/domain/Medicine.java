@@ -34,7 +34,7 @@ public class Medicine implements Serializable {
     @Column(name = "jhi_type", nullable = false)
     private MedicineType type;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "medicine_ingredients",
                joinColumns = @JoinColumn(name = "medicines_id", referencedColumnName = "id"),
                inverseJoinColumns = @JoinColumn(name = "ingredients_id", referencedColumnName = "id"))

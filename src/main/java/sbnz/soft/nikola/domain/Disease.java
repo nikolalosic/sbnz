@@ -27,13 +27,13 @@ public class Disease implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "disease_general_symptoms",
                joinColumns = @JoinColumn(name = "diseases_id", referencedColumnName = "id"),
                inverseJoinColumns = @JoinColumn(name = "general_symptoms_id", referencedColumnName = "id"))
     private Set<Symptom> generalSymptoms = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "disease_specific_symptoms",
                joinColumns = @JoinColumn(name = "diseases_id", referencedColumnName = "id"),
                inverseJoinColumns = @JoinColumn(name = "specific_symptoms_id", referencedColumnName = "id"))

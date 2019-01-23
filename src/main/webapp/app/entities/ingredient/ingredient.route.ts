@@ -34,7 +34,7 @@ export const ingredientRoute: Routes = [
             pagingParams: JhiResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_DOCTOR', 'ROLE_ADMIN'],
             defaultSort: 'id,asc',
             pageTitle: 'Ingredients'
         },
@@ -47,7 +47,7 @@ export const ingredientRoute: Routes = [
             ingredient: IngredientResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_DOCTOR','ROLE_ADMIN'],
             pageTitle: 'Ingredients'
         },
         canActivate: [UserRouteAccessService]
@@ -59,7 +59,7 @@ export const ingredientRoute: Routes = [
             ingredient: IngredientResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'Ingredients'
         },
         canActivate: [UserRouteAccessService]
@@ -71,7 +71,7 @@ export const ingredientRoute: Routes = [
             ingredient: IngredientResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'Ingredients'
         },
         canActivate: [UserRouteAccessService]
@@ -86,7 +86,7 @@ export const ingredientPopupRoute: Routes = [
             ingredient: IngredientResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'Ingredients'
         },
         canActivate: [UserRouteAccessService],

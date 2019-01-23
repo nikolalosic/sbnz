@@ -9,7 +9,7 @@ import { Principal } from 'app/core/auth/principal.service';
  * ```
  *     <some-element *jhiHasAnyAuthority="'ROLE_ADMIN'">...</some-element>
  *
- *     <some-element *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_USER']">...</some-element>
+ *     <some-element *jhiHasAnyAuthority="['ROLE_ADMIN', 'ROLE_DOCTOR']">...</some-element>
  * ```
  */
 @Directive({

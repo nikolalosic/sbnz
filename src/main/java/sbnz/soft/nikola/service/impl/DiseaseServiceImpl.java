@@ -1,5 +1,10 @@
 package sbnz.soft.nikola.service.impl;
 
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.QueryResults;
+import org.kie.api.runtime.rule.QueryResultsRow;
+import sbnz.soft.nikola.domain.Symptom;
+import sbnz.soft.nikola.security.SecurityUtils;
 import sbnz.soft.nikola.service.DiseaseService;
 import sbnz.soft.nikola.domain.Disease;
 import sbnz.soft.nikola.repository.DiseaseRepository;
@@ -12,8 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sbnz.soft.nikola.service.mapper.SymptomMapper;
+import sbnz.soft.nikola.service.util.KieSessionUtil;
+import sbnz.soft.nikola.service.util.SortingUtil;
+import sbnz.soft.nikola.web.rest.errors.BadRequestAlertException;
 
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service Implementation for managing Disease.
@@ -27,10 +36,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     private final DiseaseRepository diseaseRepository;
 
     private final DiseaseMapper diseaseMapper;
+    private final SymptomMapper symptomMapper;
+    private final KieSessionUtil kieSessionUtil;
 
-    public DiseaseServiceImpl(DiseaseRepository diseaseRepository, DiseaseMapper diseaseMapper) {
+    public DiseaseServiceImpl(DiseaseRepository diseaseRepository, DiseaseMapper diseaseMapper,
+                              KieSessionUtil kieSessionUtil,
+                              SymptomMapper symptomMapper) {
         this.diseaseRepository = diseaseRepository;
         this.diseaseMapper = diseaseMapper;
+        this.kieSessionUtil = kieSessionUtil;
+        this.symptomMapper = symptomMapper;
     }
 
     /**
@@ -69,7 +84,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     public Page<DiseaseDTO> findAllWithEagerRelationships(Pageable pageable) {
         return diseaseRepository.findAllWithEagerRelationships(pageable).map(diseaseMapper::toDto);
     }
-    
+
 
     /**
      * Get one disease by id.
@@ -81,8 +96,16 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Transactional(readOnly = true)
     public Optional<DiseaseDTO> findOne(Long id) {
         log.debug("Request to get Disease : {}", id);
-        return diseaseRepository.findOneWithEagerRelationships(id)
-            .map(diseaseMapper::toDto);
+        Optional<Disease> disease = diseaseRepository.findOneWithEagerRelationships(id);
+        if (!disease.isPresent()) {
+            return Optional.empty();
+        }
+
+        DiseaseDTO dto = diseaseMapper.toDto(disease.get());
+        dto.setSortedSymptoms(symptomMapper.toDto(getSymptomsByDisease(dto.getName(), SecurityUtils.getCurrentUserLogin().get())));
+        return Optional.of(dto);
+        //  return diseaseRepository.findOneWithEagerRelationships(id)
+        //      .map(diseaseMapper::toDto);
     }
 
     /**
@@ -94,5 +117,41 @@ public class DiseaseServiceImpl implements DiseaseService {
     public void delete(Long id) {
         log.debug("Request to delete Disease : {}", id);
         diseaseRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Symptom> getSymptomsByDisease(String search, String doctor) {
+
+        if (search == null) {
+            throw new BadRequestAlertException("Search is empty!", "String", "String");
+        }
+
+        Disease disease = this.diseaseRepository.findByName(search);
+        if (disease == null) {
+            throw new BadRequestAlertException("Disease does not exist!", "Disease", "Disease");
+        }
+
+        KieSession session = this.kieSessionUtil.getUserSession(doctor);
+
+        QueryResults results = session.getQueryResults("get Symptoms", disease);
+
+        Map<Symptom, Integer> filter = new HashMap<Symptom, Integer>();
+
+
+        for (Symptom s : disease.getGeneralSymptoms()) {
+            filter.put(s, 200);
+        }
+
+        for (Symptom s : disease.getSpecificSymptoms()) {
+            filter.put(s, 300);
+        }
+        Map<Symptom, Integer> sorted = SortingUtil.sortByValue(filter);
+
+        List<Symptom> retval = new ArrayList<>();
+        for (Symptom s : sorted.keySet()) {
+            retval.add(s);
+        }
+
+        return retval;
     }
 }

@@ -27,4 +27,6 @@ public interface DiseaseRepository extends JpaRepository<Disease, Long> {
     @Query("select disease from Disease disease left join fetch disease.generalSymptoms left join fetch disease.specificSymptoms where disease.id =:id")
     Optional<Disease> findOneWithEagerRelationships(@Param("id") Long id);
 
+    Disease findByName(String name);
+
 }

@@ -16,7 +16,7 @@
                 <dt><span>Ingredients</span></dt>
                 <dd>
                     <span *ngFor="let ingredients of medicine.ingredients; let last = last">
-                        <a [routerLink]="['/ingredient', ingredients?.id, 'view' ]">{{ingredients.id}}</a>{{last ? '' : ', '}}
+                        <a [routerLink]="['/ingredient', ingredients?.id, 'view' ]">{{ingredients.id}} - {{ingredients.name}}</a>{{last ? '' : ', '}}
                     </span>
                 </dd>
             </dl>
@@ -27,7 +27,7 @@
                 <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
             </button>
 
-            <button type="button"
+            <button type="button" *jhiHasAnyAuthority="'ROLE_ADMIN'"
                     [routerLink]="['/medicine', medicine.id, 'edit']"
                     class="btn btn-primary">
                 <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>

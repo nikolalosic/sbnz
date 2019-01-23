@@ -1,11 +1,6 @@
 package sbnz.soft.nikola.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import sbnz.soft.nikola.service.DiseaseService;
-import sbnz.soft.nikola.web.rest.errors.BadRequestAlertException;
-import sbnz.soft.nikola.web.rest.util.HeaderUtil;
-import sbnz.soft.nikola.web.rest.util.PaginationUtil;
-import sbnz.soft.nikola.service.dto.DiseaseDTO;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +9,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import sbnz.soft.nikola.security.AuthoritiesConstants;
+import sbnz.soft.nikola.service.DiseaseService;
+import sbnz.soft.nikola.service.dto.DiseaseDTO;
+import sbnz.soft.nikola.web.rest.errors.BadRequestAlertException;
+import sbnz.soft.nikola.web.rest.util.HeaderUtil;
+import sbnz.soft.nikola.web.rest.util.PaginationUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,8 @@ public class DiseaseResource {
 
     private final DiseaseService diseaseService;
 
-    public DiseaseResource(DiseaseService diseaseService) {
+    public DiseaseResource(DiseaseService diseaseService
+    ) {
         this.diseaseService = diseaseService;
     }
 
@@ -49,6 +51,7 @@ public class DiseaseResource {
      */
     @PostMapping("/diseases")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<DiseaseDTO> createDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws URISyntaxException {
         log.debug("REST request to save Disease : {}", diseaseDTO);
         if (diseaseDTO.getId() != null) {
@@ -71,6 +74,7 @@ public class DiseaseResource {
      */
     @PutMapping("/diseases")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<DiseaseDTO> updateDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws URISyntaxException {
         log.debug("REST request to update Disease : {}", diseaseDTO);
         if (diseaseDTO.getId() == null) {
@@ -85,7 +89,7 @@ public class DiseaseResource {
     /**
      * GET  /diseases : get all the diseases.
      *
-     * @param pageable the pagination information
+     * @param pageable  the pagination information
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many)
      * @return the ResponseEntity with status 200 (OK) and the list of diseases in body
      */
@@ -117,6 +121,7 @@ public class DiseaseResource {
         return ResponseUtil.wrapOrNotFound(diseaseDTO);
     }
 
+
     /**
      * DELETE  /diseases/:id : delete the "id" disease.
      *
@@ -125,6 +130,7 @@ public class DiseaseResource {
      */
     @DeleteMapping("/diseases/{id}")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteDisease(@PathVariable Long id) {
         log.debug("REST request to delete Disease : {}", id);
         diseaseService.delete(id);

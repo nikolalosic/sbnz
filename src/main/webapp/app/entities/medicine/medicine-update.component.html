@@ -38,7 +38,7 @@
                 <div class="form-group">
                     <label for="field_ingredients">Ingredients</label>
                     <select class="form-control" id="field_ingredients" multiple name="ingredients" [(ngModel)]="medicine.ingredients">
-                        <option [ngValue]="getSelected(medicine.ingredients, ingredientOption)" *ngFor="let ingredientOption of ingredients; trackBy: trackIngredientById">{{ingredientOption.id}}</option>
+                        <option [ngValue]="getSelected(medicine.ingredients, ingredientOption)" *ngFor="let ingredientOption of ingredients; trackBy: trackIngredientById">{{ingredientOption.id}} - {{ingredientOption.name}}</option>
                     </select>
                 </div>
             </div>

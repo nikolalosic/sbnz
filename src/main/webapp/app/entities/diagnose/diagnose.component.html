@@ -28,15 +28,15 @@
                 <td>{{diagnose.diagnoseDate | date:'medium'}}</td>
                 <td>
                     <div *ngIf="diagnose.diseaseId">
-                        <a [routerLink]="['../disease', diagnose.diseaseId , 'view' ]" >{{diagnose.diseaseId}}</a>
+                        <a [routerLink]="['../disease', diagnose.diseaseId , 'view' ]" >{{diagnose.diseaseId}} - {{diagnose.diseaseName}}</a>
                     </div>
                 </td>
                 <td>
-                    {{diagnose.doctorId}}
+                    {{diagnose.doctorId}} - {{diagnose.doctorFirstName}} {{diagnose.doctorLastName}}
                 </td>
                 <td>
                     <div *ngIf="diagnose.patientId">
-                        <a [routerLink]="['../patient', diagnose.patientId , 'view' ]" >{{diagnose.patientId}}</a>
+                        <a [routerLink]="['../patient', diagnose.patientId , 'view' ]" >{{diagnose.patientId}} - {{diagnose.patientFirstName}} {{diagnose.patientLastName}}</a>
                     </div>
                 </td>
                 <td class="text-right">

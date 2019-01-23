@@ -1,6 +1,8 @@
 package sbnz.soft.nikola.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.springframework.security.access.prepost.PreAuthorize;
+import sbnz.soft.nikola.security.AuthoritiesConstants;
 import sbnz.soft.nikola.service.SymptomService;
 import sbnz.soft.nikola.web.rest.errors.BadRequestAlertException;
 import sbnz.soft.nikola.web.rest.util.HeaderUtil;
@@ -49,6 +51,7 @@ public class SymptomResource {
      */
     @PostMapping("/symptoms")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SymptomDTO> createSymptom(@Valid @RequestBody SymptomDTO symptomDTO) throws URISyntaxException {
         log.debug("REST request to save Symptom : {}", symptomDTO);
         if (symptomDTO.getId() != null) {
@@ -71,6 +74,7 @@ public class SymptomResource {
      */
     @PutMapping("/symptoms")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SymptomDTO> updateSymptom(@Valid @RequestBody SymptomDTO symptomDTO) throws URISyntaxException {
         log.debug("REST request to update Symptom : {}", symptomDTO);
         if (symptomDTO.getId() == null) {
@@ -119,6 +123,7 @@ public class SymptomResource {
      */
     @DeleteMapping("/symptoms/{id}")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteSymptom(@PathVariable Long id) {
         log.debug("REST request to delete Symptom : {}", id);
         symptomService.delete(id);

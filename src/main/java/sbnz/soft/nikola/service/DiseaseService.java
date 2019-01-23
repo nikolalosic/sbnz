@@ -1,10 +1,12 @@
 package sbnz.soft.nikola.service;
 
+import sbnz.soft.nikola.domain.Symptom;
 import sbnz.soft.nikola.service.dto.DiseaseDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -49,4 +51,6 @@ public interface DiseaseService {
      * @param id the id of the entity
      */
     void delete(Long id);
+
+    List<Symptom> getSymptomsByDisease(String search, String doctor);
 }

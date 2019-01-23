@@ -1,6 +1,8 @@
 package sbnz.soft.nikola.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.springframework.security.access.prepost.PreAuthorize;
+import sbnz.soft.nikola.security.AuthoritiesConstants;
 import sbnz.soft.nikola.service.MedicineService;
 import sbnz.soft.nikola.web.rest.errors.BadRequestAlertException;
 import sbnz.soft.nikola.web.rest.util.HeaderUtil;
@@ -49,6 +51,7 @@ public class MedicineResource {
      */
     @PostMapping("/medicines")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<MedicineDTO> createMedicine(@Valid @RequestBody MedicineDTO medicineDTO) throws URISyntaxException {
         log.debug("REST request to save Medicine : {}", medicineDTO);
         if (medicineDTO.getId() != null) {
@@ -71,6 +74,7 @@ public class MedicineResource {
      */
     @PutMapping("/medicines")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<MedicineDTO> updateMedicine(@Valid @RequestBody MedicineDTO medicineDTO) throws URISyntaxException {
         log.debug("REST request to update Medicine : {}", medicineDTO);
         if (medicineDTO.getId() == null) {
@@ -125,6 +129,7 @@ public class MedicineResource {
      */
     @DeleteMapping("/medicines/{id}")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteMedicine(@PathVariable Long id) {
         log.debug("REST request to delete Medicine : {}", id);
         medicineService.delete(id);

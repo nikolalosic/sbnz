@@ -34,7 +34,7 @@ export const medicineRoute: Routes = [
             pagingParams: JhiResolvePagingParams
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_DOCTOR','ROLE_ADMIN'],
             defaultSort: 'id,asc',
             pageTitle: 'Medicines'
         },
@@ -47,7 +47,7 @@ export const medicineRoute: Routes = [
             medicine: MedicineResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_DOCTOR','ROLE_ADMIN'],
             pageTitle: 'Medicines'
         },
         canActivate: [UserRouteAccessService]
@@ -59,7 +59,7 @@ export const medicineRoute: Routes = [
             medicine: MedicineResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'Medicines'
         },
         canActivate: [UserRouteAccessService]
@@ -71,7 +71,7 @@ export const medicineRoute: Routes = [
             medicine: MedicineResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'Medicines'
         },
         canActivate: [UserRouteAccessService]
@@ -86,7 +86,7 @@ export const medicinePopupRoute: Routes = [
             medicine: MedicineResolve
         },
         data: {
-            authorities: ['ROLE_USER'],
+            authorities: ['ROLE_ADMIN'],
             pageTitle: 'Medicines'
         },
         canActivate: [UserRouteAccessService],

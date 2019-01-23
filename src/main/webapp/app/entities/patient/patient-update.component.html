@@ -23,13 +23,13 @@
                 <div class="form-group">
                     <label for="field_allergicMedicines">Allergic Medicines</label>
                     <select class="form-control" id="field_allergicMedicines" multiple name="allergicMedicines" [(ngModel)]="patient.allergicMedicines">
-                        <option [ngValue]="getSelected(patient.allergicMedicines, medicineOption)" *ngFor="let medicineOption of medicines; trackBy: trackMedicineById">{{medicineOption.id}}</option>
+                        <option [ngValue]="getSelected(patient.allergicMedicines, medicineOption)" *ngFor="let medicineOption of medicines; trackBy: trackMedicineById">{{medicineOption.id}} - {{medicineOption.name}}({{medicineOption.type}})</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="field_allergicIngredients">Allergic Ingredients</label>
                     <select class="form-control" id="field_allergicIngredients" multiple name="allergicIngredients" [(ngModel)]="patient.allergicIngredients">
-                        <option [ngValue]="getSelected(patient.allergicIngredients, ingredientOption)" *ngFor="let ingredientOption of ingredients; trackBy: trackIngredientById">{{ingredientOption.id}}</option>
+                        <option [ngValue]="getSelected(patient.allergicIngredients, ingredientOption)" *ngFor="let ingredientOption of ingredients; trackBy: trackIngredientById">{{ingredientOption.id}} - {{ingredientOption.name}}</option>
                     </select>
                 </div>
             </div>

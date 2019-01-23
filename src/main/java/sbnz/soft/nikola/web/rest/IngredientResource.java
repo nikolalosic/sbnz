@@ -1,6 +1,8 @@
 package sbnz.soft.nikola.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.springframework.security.access.prepost.PreAuthorize;
+import sbnz.soft.nikola.security.AuthoritiesConstants;
 import sbnz.soft.nikola.service.IngredientService;
 import sbnz.soft.nikola.web.rest.errors.BadRequestAlertException;
 import sbnz.soft.nikola.web.rest.util.HeaderUtil;
@@ -49,6 +51,7 @@ public class IngredientResource {
      */
     @PostMapping("/ingredients")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<IngredientDTO> createIngredient(@Valid @RequestBody IngredientDTO ingredientDTO) throws URISyntaxException {
         log.debug("REST request to save Ingredient : {}", ingredientDTO);
         if (ingredientDTO.getId() != null) {
@@ -71,6 +74,7 @@ public class IngredientResource {
      */
     @PutMapping("/ingredients")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<IngredientDTO> updateIngredient(@Valid @RequestBody IngredientDTO ingredientDTO) throws URISyntaxException {
         log.debug("REST request to update Ingredient : {}", ingredientDTO);
         if (ingredientDTO.getId() == null) {
@@ -119,6 +123,7 @@ public class IngredientResource {
      */
     @DeleteMapping("/ingredients/{id}")
     @Timed
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteIngredient(@PathVariable Long id) {
         log.debug("REST request to delete Ingredient : {}", id);
         ingredientService.delete(id);

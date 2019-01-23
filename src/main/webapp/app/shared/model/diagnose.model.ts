@@ -1,6 +1,6 @@
-import { Moment } from 'moment';
-import { ISymptom } from 'app/shared/model//symptom.model';
-import { IMedicine } from 'app/shared/model//medicine.model';
+import {Moment} from 'moment';
+import {ISymptom} from 'app/shared/model//symptom.model';
+import {IMedicine} from 'app/shared/model//medicine.model';
 
 export interface IDiagnose {
     id?: number;
@@ -10,6 +10,12 @@ export interface IDiagnose {
     symptoms?: ISymptom[];
     medicines?: IMedicine[];
     patientId?: number;
+    doctorFirstName?: string;
+    doctorLastName?: string;
+    patientFirstName?: string;
+    patientLastName?: string;
+    diseaseName?: string;
+
 }
 
 export class Diagnose implements IDiagnose {
@@ -20,6 +26,12 @@ export class Diagnose implements IDiagnose {
         public doctorId?: number,
         public symptoms?: ISymptom[],
         public medicines?: IMedicine[],
-        public patientId?: number
-    ) {}
+        public patientId?: number,
+        doctorFirstName?: string,
+        doctorLastName?: string,
+        patientFirstName?: string,
+        patientLastName?: string,
+        diseaseName?: string
+    ) {
+    }
 }

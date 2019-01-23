@@ -1,7 +1,7 @@
 <div class="row justify-content-center">
     <div class="col-8">
         <div *ngIf="patient">
-            <h2><span>Patient</span> {{patient.id}}</h2>
+            <h2><span>Patient</span> {{patient.id}} - {{patient.firstName}} {{patient.lastName}}</h2>
             <hr>
             <jhi-alert-error></jhi-alert-error>
             <dl class="row-md jh-entity-details">
@@ -16,13 +16,13 @@
                 <dt><span>Allergic Medicines</span></dt>
                 <dd>
                     <span *ngFor="let allergicMedicines of patient.allergicMedicines; let last = last">
-                        <a [routerLink]="['/medicine', allergicMedicines?.id, 'view' ]">{{allergicMedicines.id}}</a>{{last ? '' : ', '}}
+                        <a [routerLink]="['/medicine', allergicMedicines?.id, 'view' ]">{{allergicMedicines.id}} - {{allergicMedicines.name}} ({{allergicMedicines.type}})</a>{{last ? '' : ', '}}
                     </span>
                 </dd>
                 <dt><span>Allergic Ingredients</span></dt>
                 <dd>
                     <span *ngFor="let allergicIngredients of patient.allergicIngredients; let last = last">
-                        <a [routerLink]="['/ingredient', allergicIngredients?.id, 'view' ]">{{allergicIngredients.id}}</a>{{last ? '' : ', '}}
+                        <a [routerLink]="['/ingredient', allergicIngredients?.id, 'view' ]">{{allergicIngredients.id}} - {{allergicIngredients.name}}</a>{{last ? '' : ', '}}
                     </span>
                 </dd>
             </dl>

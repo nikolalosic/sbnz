@@ -7,6 +7,7 @@ import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -27,7 +28,8 @@ public class Diagnose implements Serializable {
 
     @NotNull
     @Column(name = "diagnose_date", nullable = false)
-    private Instant diagnoseDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date diagnoseDate;
 
     @ManyToOne
     @JsonIgnoreProperties("")
@@ -37,16 +39,16 @@ public class Diagnose implements Serializable {
     @JsonIgnoreProperties("")
     private User doctor;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "diagnose_symptoms",
-               joinColumns = @JoinColumn(name = "diagnoses_id", referencedColumnName = "id"),
-               inverseJoinColumns = @JoinColumn(name = "symptoms_id", referencedColumnName = "id"))
+        joinColumns = @JoinColumn(name = "diagnoses_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "symptoms_id", referencedColumnName = "id"))
     private Set<Symptom> symptoms = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "diagnose_medicines",
-               joinColumns = @JoinColumn(name = "diagnoses_id", referencedColumnName = "id"),
-               inverseJoinColumns = @JoinColumn(name = "medicines_id", referencedColumnName = "id"))
+        joinColumns = @JoinColumn(name = "diagnoses_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "medicines_id", referencedColumnName = "id"))
     private Set<Medicine> medicines = new HashSet<>();
 
     @ManyToOne
@@ -62,16 +64,16 @@ public class Diagnose implements Serializable {
         this.id = id;
     }
 
-    public Instant getDiagnoseDate() {
+    public Date getDiagnoseDate() {
         return diagnoseDate;
     }
 
-    public Diagnose diagnoseDate(Instant diagnoseDate) {
+    public Diagnose diagnoseDate(Date diagnoseDate) {
         this.diagnoseDate = diagnoseDate;
         return this;
     }
 
-    public void setDiagnoseDate(Instant diagnoseDate) {
+    public void setDiagnoseDate(Date diagnoseDate) {
         this.diagnoseDate = diagnoseDate;
     }
 

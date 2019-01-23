@@ -12,7 +12,12 @@ import org.mapstruct.*;
 public interface DiagnoseMapper extends EntityMapper<DiagnoseDTO, Diagnose> {
 
     @Mapping(source = "disease.id", target = "diseaseId")
+    @Mapping(source = "disease.name", target = "diseaseName")
     @Mapping(source = "doctor.id", target = "doctorId")
+    @Mapping(source = "doctor.firstName", target = "doctorFirstName")
+    @Mapping(source = "doctor.lastName", target = "doctorLastName")
+    @Mapping(source = "patient.firstName", target = "patientFirstName")
+    @Mapping(source = "patient.lastName", target = "patientLastName")
     @Mapping(source = "patient.id", target = "patientId")
     DiagnoseDTO toDto(Diagnose diagnose);
 

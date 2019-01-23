@@ -29,16 +29,16 @@ public class Patient implements Serializable {
     @Column(name = "last_name")
     private String lastName;
 
-    @OneToMany(mappedBy = "patient")
+    @OneToMany(mappedBy = "patient", fetch = FetchType.EAGER)
     private Set<Diagnose> diagnoses = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "patient_allergic_medicines",
                joinColumns = @JoinColumn(name = "patients_id", referencedColumnName = "id"),
                inverseJoinColumns = @JoinColumn(name = "allergic_medicines_id", referencedColumnName = "id"))
     private Set<Medicine> allergicMedicines = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "patient_allergic_ingredients",
                joinColumns = @JoinColumn(name = "patients_id", referencedColumnName = "id"),
                inverseJoinColumns = @JoinColumn(name = "allergic_ingredients_id", referencedColumnName = "id"))
