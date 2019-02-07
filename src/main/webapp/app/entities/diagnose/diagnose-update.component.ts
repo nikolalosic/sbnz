@@ -56,7 +56,7 @@ export class DiagnoseUpdateComponent implements OnInit {
         this.activatedRoute.data.subscribe(({diagnose}) => {
             this.diagnose = diagnose;
         });
-        this.diseaseService.query().subscribe(
+        this.diseaseService.query({page:0, size:55}).subscribe(
             (res: HttpResponse<IDisease[]>) => {
                 this.diseases = res.body;
             },
@@ -68,13 +68,13 @@ export class DiagnoseUpdateComponent implements OnInit {
             },
             (res: HttpErrorResponse) => this.onError(res.message)
         );
-        this.symptomService.query().subscribe(
+        this.symptomService.query({page:0, size:55}).subscribe(
             (res: HttpResponse<ISymptom[]>) => {
                 this.symptoms = res.body;
             },
             (res: HttpErrorResponse) => this.onError(res.message)
         );
-        this.medicineService.query().subscribe(
+        this.medicineService.query({page:0, size:55}).subscribe(
             (res: HttpResponse<IMedicine[]>) => {
                 this.medicines = res.body;
             },

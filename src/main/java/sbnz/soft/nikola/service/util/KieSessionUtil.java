@@ -55,9 +55,11 @@ public class KieSessionUtil {
         KieSession kieSession = kieContainer.newKieSession("ksession-rules");
 
      //   KieSession kieSession = KieContainerConfig.kieBase.newKieSession(KieContainerConfig.sessionConfiguration, null);
+        // FIXME: SHOULD REMOVE THIS to allow change while running
         for (Disease d : this.diseaseRepository.findAll()) {
             kieSession.insert(d);
         }
+        // FIXME: not really needed
         for (User u : this.userRepository.findAll()) {
             kieSession.insert(u);
         }
